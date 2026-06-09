@@ -1,5 +1,6 @@
 import { Bath, BedDouble, MapPin, Maximize } from 'lucide-react'
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const FeaturedProperties = () => {
     const properties = [
@@ -51,6 +52,7 @@ const FeaturedProperties = () => {
         </div>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2'>
             {properties.map((property)=>(
+              <Link to={`/property/${property.id}`} key={property.id}>
 <div key={property.id} className='bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition'>
         <div className='relative'>
             <img src={property.image} alt={property.title} className='w-full h-56 object-cover'/>
@@ -75,7 +77,7 @@ const FeaturedProperties = () => {
             </div>
         </div>
         
-    </div>
+    </div></Link>
             ))}
         </div>
     </section>
