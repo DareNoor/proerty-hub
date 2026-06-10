@@ -12,25 +12,29 @@ import Footer from "./components/Footer"
 
 const App = () => {
   return (
-  <>
-    <Navbar/>
-    <div className="pt-20 min-h-screen bg-cream">
     <Routes>
-      <Route path="/" element={<Home/>}/>
-       <Route path="/properties" element={<Property />} />
-        <Route path="/property/:id" element={<PropertyDetails />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="*" element={<NotFound />} />
+      {/* Admin - no Navbar/Footer */}
+      <Route path="/admin" element={<Admin />} />
 
-
+      {/* Baaki pages - with Navbar/Footer */}
+      <Route path="/*" element={
+        <div className="min-h-screen bg-cream">
+          <Navbar/>
+          <main className="pt-20 min-h-screen">
+            <Routes>
+              <Route path="/" element={<Home/>}/>
+              <Route path="/properties" element={<Property />} />
+              <Route path="/property/:id" element={<PropertyDetails />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+          <Footer/>
+        </div>
+      }/>
     </Routes>
-    </div>
-    <Footer/>
-  
-  </>
   )
 }
 
