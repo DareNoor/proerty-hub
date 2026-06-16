@@ -86,7 +86,7 @@ const Navbar = () => {
    <div className='hidden lg:flex items-center gap-3'>
     <Link to='/login' className='border px-5 py-2 border-primary rounded hover:border-accent font-body text-sm font-medium text-primary hover:text-accent transition-colors'>
     Login</Link>
-    <Link to='/list-property' className='bg-accent hover:bg-orange-700 text-white font-body text-sm font-medium px-5 py-2 rounded transition-colors'>
+    <Link to='/contact' className='bg-accent hover:bg-orange-700 text-white font-body text-sm font-medium px-5 py-2 rounded transition-colors'>
     List Property</Link>
    </div>
     </div>
