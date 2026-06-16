@@ -1,3 +1,6 @@
+import { configureStore } from "@reduxjs/toolkit"
+import authReducer from '../redux/authSlice.js'
+import propertyReducer from '../redux/propertySlice.js'
 const saveToLocalStorage=(state)=>{
   try {
     localStorage.setItem("realestate",JSON.stringify(state))
@@ -12,9 +15,11 @@ const loadFromLocalStorage=()=>{
   } catch (error) {}
     return undefined
   }
-  import { configureStore } from "@reduxjs/toolkit"
   export const store=configureStore({
-    reducer:{},
+    reducer:{
+      auth: authReducer,
+      properties:propertyReducer
+    },
     preloadedState: loadFromLocalStorage()
   })
   store.subscribe(()=>saveToLocalStorage(store.getState()))

@@ -1,7 +1,28 @@
 import { Clock, Mail, MapPin, Phone } from 'lucide-react'
-import React from 'react'
-
+import React, { useState } from 'react'
+import axios from '../utils/axios'
 const Contact = () => {
+  const [formData,setFormData]=useState({
+    name:'',email:'',phone:'',message:''
+  })
+  const[isLoading,setIsLoading]=useState(false)
+  const[success,setSuccess]=useState(false)
+  const handleChange=(e)=>{
+    setFormData({...formData,[e.target.name]:e.target.value})
+  }
+  const handleSubmit=async(e)=>{
+    e.preventDefault()
+    try {
+      setIsLoading(true)
+      await axios.post('/inquiries',formData)
+      setSuccess(true)
+      setFormData({name:'',email:'',phone:'',message:''})
+    } catch (error) {
+      console.log(error)
+    } finally{
+      setIsLoading(false)
+    }
+  }
   return (
     <>
 <div className='bg-primary py-12 text-white text-center'>
@@ -68,10 +89,26 @@ const Contact = () => {
       <div className='bg-white rounded-xl shadow-md p-8'>
         <h3 className='font-heading font-bold text-2xl text-primary mb-6'>Send Us a Message</h3>
         <div className='flex flex-col gap-4'>
-          <input type="text" className='border px-4 py-3 text-sm outline-none' placeholder='Your Name'/>
-                    <input type="email" className='border px-4 py-3 text-sm outline-none' placeholder='Your Email'/>
-          <textarea rows={5} className='border border-gray-200 rounded px-4 py-3 text-sm outline-none w-full' placeholder='Your Message'/>
-          <button className='bg-accent text-white py-3 rounded font-medium'>Send Message</button>
+          <input type="text" name='name' value={formData.name} onChange={handleChange} className='border px-4 py-3 text-sm outline-none' placeholder='Your Name'/>
+                    <input type="email" name='email' value={formData.email} onChange={handleChange} className='border px-4 py-3 text-sm outline-none' placeholder='Your Email'/>
+          <input 
+  type="text" 
+  name="phone" 
+  value={formData.phone} 
+  onChange={handleChange} 
+  className='border px-4 py-3 text-sm outline-none w-full' 
+  placeholder='Your Phone'
+/>
+          <textarea name='message' value={formData.message} onChange={handleChange} rows={5} className='border border-gray-200 rounded px-4 py-3 text-sm outline-none w-full' placeholder='Your Message'/>
+          {success && (
+            <p className='text-gray-600 text-sm text-center'>
+                  Message sent successfully! We'll get back to you soon.
+
+            </p>
+          )}
+          <button onClick={handleSubmit} disabled={isLoading} className='bg-accent text-white py-3 rounded font-medium transition-colors hover:bg-orange-700'>
+            {isLoading?'Sending...':'Send Message'}
+            </button>
 
         </div>
       </div>

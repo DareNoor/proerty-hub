@@ -1,7 +1,15 @@
 import { Bath, BedDouble, CheckCircle, Mail, MapPin, Maximize, Phone } from 'lucide-react'
-import React from 'react'
-
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import { fetchPropertyById } from '../services/property.service'
 const PropertyDetails = () => {
+  const {id}=useParams()
+  const dispatch=useDispatch()
+  const{property,isLoading}=useSelector((state)=>state.properties)
+  useEffect(()=>{
+    dispatch(fetchPropertyById(id))
+  },[dispatch,id])
   const features = ['Swimming Pool', 'Garden', 'Garage', 'Security', 'Generator', 'Gas']
   return (
     <>
@@ -84,11 +92,11 @@ Features & Amenities
         Contact Agent
       </h3>
       <div className='flex items-center gap-3 mb-4'>
-        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400" alt="Agent Image" className='w-14 h-14 rounded-full object-cover object-top' />
+        <img src={property?.images[0]} alt="Agent Image" className='w-14 h-14 rounded-full object-cover object-top' />
 <div>
-  <p className='font-semibold text-gray-800'>Ahmed Khan
+  <p className='font-semibold text-gray-800'>{property?.price}
 </p>
-<p className='text-sm text-gray-500'>Senior Property Agent</p>
+<p className='text-sm text-gray-500'>{property?.title}</p>
 
 </div>
       </div>

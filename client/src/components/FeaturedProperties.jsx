@@ -1,43 +1,50 @@
 import { Bath, BedDouble, MapPin, Maximize } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { fetchProperties } from '../services/property.service'
 
 const FeaturedProperties = () => {
-    const properties = [
-  {
-    id: 1,
-    title: 'Modern Villa in DHA',
-    price: 'PKR 2.5 Crore',
-    location: 'DHA Phase 6, Lahore',
-    beds: 4,
-    baths: 3,
-    area: '10 Marla',
-    type: 'Sale',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800'
-  },
-  {
-    id: 2,
-    title: 'Modern Villa in DHA',
-    price: 'PKR 1.5 Crore',
-    location: 'Model Town, Lahore',
-    beds: 4,
-    baths: 3,
-    area: '10 Marla',
-    type: 'Sale',
-    image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800'
-  },
-  {
-    id: 3,
-    title: 'Modern Villa in DHA',
-    price: 'PKR 3.5 Crore',
-    location: 'Johar Town, Lahore',
-    beds: 4,
-    baths: 3,
-    area: '10 Marla',
-    type: 'Rent',
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800'
-  },
-]
+  const dispatch=useDispatch()
+  const {properties}=useSelector((state)=>state.properties)
+  useEffect(()=>{
+    dispatch(fetchProperties())
+  },[dispatch])
+//     const properties = [
+//   {
+//     id: 1,
+//     title: 'Modern Villa in DHA',
+//     price: 'PKR 2.5 Crore',
+//     location: 'DHA Phase 6, Lahore',
+//     beds: 4,
+//     baths: 3,
+//     area: '10 Marla',
+//     type: 'Sale',
+//     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800'
+//   },
+//   {
+//     id: 2,
+//     title: 'Modern Villa in DHA',
+//     price: 'PKR 1.5 Crore',
+//     location: 'Model Town, Lahore',
+//     beds: 4,
+//     baths: 3,
+//     area: '10 Marla',
+//     type: 'Sale',
+//     image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800'
+//   },
+//   {
+//     id: 3,
+//     title: 'Modern Villa in DHA',
+//     price: 'PKR 3.5 Crore',
+//     location: 'Johar Town, Lahore',
+//     beds: 4,
+//     baths: 3,
+//     area: '10 Marla',
+//     type: 'Rent',
+//     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800'
+//   },
+// ]
   return (
     <>
     <section className='bg-cream py-16 '>
@@ -51,11 +58,11 @@ const FeaturedProperties = () => {
             </p>
         </div>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2'>
-            {properties.map((property)=>(
-              <Link to={`/property/${property.id}`} key={property.id}>
+            {properties.slice(0,3).map((property)=>(
+              <Link to={`/property/${property._id}`} key={property._id}>
 <div key={property.id} className='bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition'>
         <div className='relative'>
-            <img src={property.image} alt={property.title} className='w-full h-56 object-cover'/>
+            <img src={property.images[0]} alt={property.title} className='w-full h-56 object-cover'/>
             <span className='absolute top-3 left-3 bg-accent text-white px-3 py-1 rounded text-xs'>{property.type}</span>
         </div>
         <div className='p-5'>

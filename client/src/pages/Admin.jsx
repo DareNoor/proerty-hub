@@ -1,8 +1,17 @@
-import { Building, LayoutDashboard, MessageSquare, Settings, UserCircle, Users } from 'lucide-react'
-import React from 'react'
+import { Building, FastForward, LayoutDashboard, MessageSquare, Settings, UserCircle, Users } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { createProperty, deleteProperty, fetchProperties, updateProperty } from '../services/property.service'
 
 const Admin = () => {
+  const [showForm,setShowForm] =useState(false)
+  const dispatch=useDispatch()
+  const{token}=useSelector((state)=>state.auth)
+  const{properties}=useSelector((state)=>state.properties)
+  useEffect(()=>{
+    dispatch(fetchProperties())
+  },[dispatch])
   const sidebarLinks = [
       { icon: <LayoutDashboard/>, label: 'Dashboard', path: '/admin' },
       { icon: <Building/>, label: 'Properties', path: '/admin/properties' },
@@ -16,14 +25,104 @@ const Admin = () => {
   { label: 'Total Users', value: '1,204', icon: <UserCircle size={24}/>, color: 'bg-purple-50 text-purple-600' },
   { label: 'Inquiries', value: '36', icon: <MessageSquare size={24}/>, color: 'bg-orange-50 text-orange-600' },
 ]
-const properties = [
-  { id: 1, title: 'Modern Villa DHA', location: 'Lahore', price: 'PKR 2.5 Cr', type: 'Sale', status: 'Active' },
-  { id: 2, title: 'Apartment Gulberg', location: 'Lahore', price: 'PKR 80 Lac', type: 'Rent', status: 'Active' },
-  { id: 3, title: 'Commercial Plaza', location: 'Karachi', price: 'PKR 5 Cr', type: 'Sale', status: 'Pending' },
-]
+// const properties = [
+//   { id: 1, title: 'Modern Villa DHA', location: 'Lahore', price: 'PKR 2.5 Cr', type: 'Sale', status: 'Active' },
+//   { id: 2, title: 'Apartment Gulberg', location: 'Lahore', price: 'PKR 80 Lac', type: 'Rent', status: 'Active' },
+//   { id: 3, title: 'Commercial Plaza', location: 'Karachi', price: 'PKR 5 Cr', type: 'Sale', status: 'Pending' },
+// ]
+const [formData, setFormData]=useState({
+  title:'',description:"",price:'',location:'',city:'',type:'sale',category:'residential',beds:'',baths:'',area:'',
+})
+const handleChange=(e)=>{
+  setFormData({...formData,[e.target.name]:e.target.value})
+}
+const handleSubmit = async()=>{
+  const data =new FormData()
+  Object.keys(formData).forEach(key=>{
+    data.append(key,formData[key])
+  })
+  images.forEach(image=>{
+    data.append('images',image)
+  })
+  console.log('Images array:', images)  // yeh add karo
+  console.log('FormData entries:', [...data.entries()])  // yeh add karo
+  if(editId){
+    await dispatch(updateProperty(editId,data,token))
+  }else{
+    await dispatch(createProperty(data,token))
+  }
+  setShowForm(false)
+  setEditId(null)
+  setImages([])
+  setFormData({
+    title: '', description: '', price: '', location: '', city: '',
+    type: 'sale', category: 'residential', beds: '', baths: '', area: ''
+
+  })
+}
+const handleDelete= async(id)=>{
+  if(window.confirm('Are you sure you want to delete this property?')){
+    await dispatch(deleteProperty(id,token))
+  }
+}
+const [editId, setEditId] = useState(null)
+const handleEdit = (property) => {
+  setFormData({
+    title: property.title,
+    description: property.description,
+    price: property.price,
+    location: property.location,
+    city: property.city,
+    type: property.type,
+    category: property.category,
+    beds: property.beds,
+    baths: property.baths,
+    area: property.area,
+  })
+  setEditId(property._id)
+  setShowForm(true)
+}
+const [images,setImages]=useState([])
+const handleImageChange=(e)=>{
+  setImages([...e.target.files])
+}
   return (
     
     <>
+    {showForm && (
+      <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-10'>
+        <div className='bg-white rounded-xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto'>
+          <h2 className='font-heading font-bold text-xl text-pretty mb-6'>Add New Property</h2>
+          <div className='flex flex-col gap-4'>
+            <input value={formData.title} onChange={handleChange} name='title' placeholder='Property Title' className='border px-4 py-3 text-sm outline-none'/>
+            <textarea value={formData.description} onChange={handleChange} name="description" rows={3} placeholder='Description' className='border rounded px-3 py-4 text-sm outline-none'/>
+            <input value={formData.price} onChange={handleChange} type="number" name="price" placeholder='Price (PKR)' className='border rounded px-4 py-3 text-sm outline-none'/>
+            <input value={formData.location} onChange={handleChange}  name="location" placeholder='Location' className='border rounded px-4 py-3 text-sm outline-none'/>
+            <input value={formData.city} onChange={handleChange}  name="city" placeholder='City' className='border rounded px-4 py-3 text-sm outline-none'/>
+            <input type='file' onChange={handleImageChange}  name="images" multiple  accept="image/*"  className='border rounded px-4 py-3 text-sm outline-none'/>
+          <select value={formData.type} onChange={handleChange} name="type" className='border rounded px-4 py-3 text-sm outline-none'>
+            <option value="sale">Sale</option>
+            <option value="rent">Rent</option>
+            <option value="commercial">Commercial</option>
+          </select>
+          <select value={formData.category} onChange={handleChange} name='category' className='border rounded px-4 py-3 text-sm outline-none'>
+          <option value='residential'>Residential</option>
+          <option value='commercial'>Commercial</option>
+        </select>
+        <div className='flex gap-3'>
+          <input value={formData.beds} onChange={handleChange}  name='beds' type='number' placeholder='Beds' className='border rounded px-4 py-3 text-sm outline-none flex-1' />
+          <input value={formData.baths} onChange={handleChange}  name='baths' type='number' placeholder='Baths' className='border rounded px-4 py-3 text-sm outline-none flex-1' />
+          <input value={formData.area} onChange={handleChange} name='area' type='text' placeholder='Area' className='border rounded px-4 py-3 text-sm outline-none flex-1' />
+
+        </div>
+        <div className='flex gap-3 mt-2'>
+          <button onClick={handleSubmit} className='bg-accent text-white px-6 py-2 rounded flex-1'>Add Property</button>
+          <button onClick={()=>setShowForm(false)} className='border border-gray-300 px-6 py-2 rounded flex-1'>Cancel</button>
+        </div>
+          </div>
+        </div>
+      </div>
+    )}
     <div className='flex min-h-screen'>
       <div className='w-64 bg-primary text-white shrink-0'>
         <div className='px-6 py-5 border-b border-white/10'>
@@ -75,7 +174,7 @@ const properties = [
         <div className='bg-white rounded-xl shadow-sm p-6'>
           <div className='flex justify-between items-center mb-4'>
             <h2 className='font-heading font-semibold text-lg'>Recent Properties</h2>
-            <button className='bg-accent text-white px-4 py-2 rounded text-sm'>Add Properties</button>
+            <button onClick={()=>setShowForm(true)} className='bg-accent text-white px-4 py-2 rounded text-sm'>Add Properties</button>
           
           </div>
           <div className='overflow-x-auto'>
@@ -100,7 +199,7 @@ const properties = [
 
                 ):(
                  properties.map((property)=>(
-                  <tr key={property.id} className='border-t bg-gray-100 hover:bg-gray-50'>
+                  <tr key={property._id} className='border-t bg-gray-100 hover:bg-gray-50'>
                     <td className='py-3 px-4 text-gray-800 text-left font-medium'>{property.title}</td>
                  <td className='py-3 px-4 text-gray-500'>{property.location}</td>
       <td className='py-3 px-4 text-gray-800 font-medium'>{property.price}</td>
@@ -110,8 +209,8 @@ const properties = [
       </td>
       <td className='py-3 px-4'>
         <div className='flex items-center gap-2'>
-          <button className='text-primary hover:text-accent text-xs font-medium'>Edit</button>
-          <button className='text-red-500 hover:text-red-700 text-xs font-medium'>Delete</button>
+          <button className='text-primary hover:text-accent text-xs font-medium' onClick={()=>handleEdit(property)}>Edit</button>
+          <button className='text-red-500 hover:text-red-700 text-xs font-medium' onClick={()=>handleDelete(property._id)}>Delete</button>
         </div>
       </td>
       
