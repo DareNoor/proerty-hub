@@ -9,6 +9,7 @@ import Login from "./pages/Login"
 import Admin from "./pages/Admin"
 import NotFound from "./pages/NotFound"
 import Footer from "./components/Footer"
+import Agents from "./components/Agents"
 
 const App = () => {
   return (
@@ -29,6 +30,8 @@ const App = () => {
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="*" element={<NotFound />} />
+           <Route path="/agents" element={<Agents />} />
+
             </Routes>
           </main>
           <Footer/>
